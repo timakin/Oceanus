@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Oceanus::VERSION
   spec.authors       = ["timakin"]
   spec.email         = ["timaki.st@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = "Oceanus: Docker implemented with Ruby"
+  spec.description   = "Oceanus, docker implementation with Ruby, inspired by Bocker." 
   spec.homepage      = ""
   spec.license       = "MIT"
 
