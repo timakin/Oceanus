@@ -1,5 +1,5 @@
 require "oceanus/version"
+require "oceanus/cli"
 
 module Oceanus
-  # Your code goes here...
 end
