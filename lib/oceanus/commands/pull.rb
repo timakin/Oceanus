@@ -6,12 +6,7 @@ module Oceanus
             def self.exec(image)
                 # http://docs.docker.com/v1.7/reference/api/hub_registry_spec/#pull
                 api = Oceanus::Utils::API.new('timakin/node-mongo-codemagnet')
-                access_token = api.get_access_token
-                puts access_token
-                tag = api.get_latest_tag
-                puts tag
-                ancestry = api.get_ancestry
-                puts ancestry
+                api.get_images
                 puts "pull #{image}"
             end
         end
