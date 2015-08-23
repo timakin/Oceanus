@@ -18,7 +18,13 @@ module Oceanus
 
             def get_latest_tag
                 res = @client.get(@latest_tag_path, nil, {'Authorization' => "Token #{@access_token.join(", ")}"})
-                @latest_tag = res.body
+                @latest_tag = res.body.gsub(/"/, "")
+            end
+
+            def get_ancestry
+                ancestry_path = "#{@registry_path}/images/#{@latest_tag}/ancestry"
+                res = @client.get(ancestry_path, nil, {'Authorization' => "Token #{@access_token.join(", ")}"})
+                @ancestry = res.body
             end
         end
     end

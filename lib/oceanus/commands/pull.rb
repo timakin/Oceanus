@@ -10,6 +10,8 @@ module Oceanus
                 puts access_token
                 tag = api.get_latest_tag
                 puts tag
+                ancestry = api.get_ancestry
+                puts ancestry
                 puts "pull #{image}"
             end
         end
