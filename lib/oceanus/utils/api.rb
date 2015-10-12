@@ -42,16 +42,25 @@ module Oceanus
                 Dir.mkdir("/tmp/#{uuid}")
                 puts "Downloading images..."
                 begin
+                    ## 個別のimageデータを取得し、tarファイルとして保存。
                     @ancestry[3..4].map { |id|
                         layer_path       = "#{@registry_path}/images/#{id}/layer"
                         gateway_res      = @client.get(layer_path, nil, {'Authorization' => "Token #{@access_token}"})
                         compressed_image = @client.get(gateway_res.header['Location'][0], nil, {'Authorization' => "Token #{@access_token}"})
     
                         File.open("/tmp/#{uuid}/layer.tar", 'a') do |file|
-                            file.write(compressed_image_res.body)
+                            file.write(compressed_image.body)
                             file.close()
                         end
                     }
+
+                    ## 一時的にlayer.tarとして保存したimageを特定ディレクトリに展開する。
+                    ## 展開し終わったらlayer.tarは削除する。
+                   
+
+                    ## img.sourceという、{image}:{tag}のペアを記録したファイルを作る。
+
+                    ## 展開したファイルシステムを/var/oceanous以下にコピー、
                 rescue => e
                     puts e.message
                     FileUtils.rm_r("/tmp/#{uuid}")
