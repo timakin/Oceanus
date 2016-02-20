@@ -1,10 +1,9 @@
 # Oceanus
 
-TODO: Write a gem description
+Docker implementation with Ruby.
+Depending on LXC.
 
 ## Installation
-
-Add this line to your application's Gemfile:
 
 ```ruby
 gem 'oceanus'
@@ -20,7 +19,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```sh
+$ oceanus pull {image}:{tag}
+$ oceanus ps
+$ oceanus run {image} {command}
+$ oceanus logs {container_id}
+$ oceanus images
+$ oceanus rm {container_id}
+$ oceanus rmi {image_id}
+$ oceanus stop {container_id}
+$ oceanus build -t {image}:{tag} {directory_path_of_Dockerfile}
+```
 
 ## Contributing
 

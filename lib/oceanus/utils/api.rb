@@ -52,7 +52,7 @@ module Oceanus
                         layer_path       = "#{@registry_path}/images/#{id}/layer"
                         gateway_res      = @client.get(layer_path, nil, {'Authorization' => "Token #{@access_token}"})
                         compressed_image = @client.get(gateway_res.header['Location'][0], nil, {'Authorization' => "Token #{@access_token}"})
-    
+
                         File.open("/tmp/#{uuid}/layer.tar", 'a') do |file|
                             file.write(compressed_image.body)
                             file.close()
@@ -61,7 +61,6 @@ module Oceanus
 
                     ## 一時的にlayer.tarとして保存したimageを特定ディレクトリに展開する。
                     ## 展開し終わったらlayer.tarは削除する。
-                   
 
                     ## img.sourceという、{image}:{tag}のペアを記録したファイルを作る。
 
