@@ -20,22 +20,27 @@ module Oceanus
             end
 
             private
+
+            # Docker Registry APIを叩くために必要なアクセストークンを取得する
             def get_access_token
                 res = @client.get(@image_path, nil, {'X-Docker-Token' => true})
                 @access_token = res.header["X-Docker-Token"].join(", ")
             end
 
+            # imageの最新版のtagを取得する
             def get_latest_tag
                 res = @client.get(@latest_tag_path, nil, {'Authorization' => "Token #{@access_token}"})
                 @latest_tag = res.body.gsub(/"/, "")
             end
 
+            # Imageのancestry(diff履歴)を取得する
             def get_ancestry
                 ancestry_path = "#{@registry_path}/images/#{@latest_tag}/ancestry"
                 res = @client.get(ancestry_path, nil, {'Authorization' => "Token #{@access_token}"})
                 @ancestry = res.body.gsub(/\[|\]|"/, "").split(", ")
             end
 
+            # layer(Imageのバイナリデータ)を取得し、特定ディレクトリ配下に展開する
             def get_layers
                 uuid = SecureRandom.uuid
                 puts uuid
