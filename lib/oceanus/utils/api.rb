@@ -10,6 +10,9 @@ module Oceanus
                 @registry_path   = "https://registry-1.docker.io/v1"
                 @image_path      = "#{@index_path}/repositories/#{image}/images"
                 @latest_tag_path = "#{@registry_path}/repositories/#{image}/tags/#{tag}"
+                @image = image
+                @tag   = tag
+                @uuid  = SecureRandom.uuid
             end
 
             def get_images
@@ -41,34 +44,66 @@ module Oceanus
             end
 
             # layer(Imageのバイナリデータ)を取得し、特定ディレクトリ配下に展開する
+            # ストレージの状態の差分(ancestry)をレイヤとして重ね合わせることで、イメージを形成する。（ユニオンファイルシステム）
             def get_layers
-                uuid = SecureRandom.uuid
-                puts uuid
-                Dir.mkdir("/tmp/#{uuid}")
+                puts @uuid
+                Dir.mkdir("/tmp/#{@uuid}")
                 puts "Downloading images..."
                 begin
                     ## 個別のimageデータを取得し、tarファイルとして保存。
+                    # TODO: 便宜的にancestryの最初の方のimageを保存している。
                     @ancestry[3..4].map { |id|
                         layer_path       = "#{@registry_path}/images/#{id}/layer"
                         gateway_res      = @client.get(layer_path, nil, {'Authorization' => "Token #{@access_token}"})
                         compressed_image = @client.get(gateway_res.header['Location'][0], nil, {'Authorization' => "Token #{@access_token}"})
 
-                        File.open("/tmp/#{uuid}/layer.tar", 'a') do |file|
+                        File.open("/tmp/#{@uuid}/layer.tar", 'a') do |file|
                             file.write(compressed_image.body)
                             file.close()
                         end
+
+                        ## 一時的にlayer.tarとして保存したimageを特定ディレクトリに展開する。
+                        ## 展開し終わったらlayer.tarは削除する。
+                        tarmanager = Tar.new()
+                        io = tarmanager.tar("/tmp/#{@uuid}/layer.tar")
+                        tarmanager.untar(io, "/tmp/#{@uuid}")
+                        FileUtils.rm_rf("/tmp/#{@uuid}/layer.tar")
                     }
 
-                    ## 一時的にlayer.tarとして保存したimageを特定ディレクトリに展開する。
-                    ## 展開し終わったらlayer.tarは削除する。
+                    ## img.sourceという、{image}:{tag}のペアを記録したファイルを作る。(imagesの出力の時に使う)
+                    File.open("/tmp/#{@uuid}/img.source", 'a') do |source|
+                        source.write("#{@image}:#{@tag}")
+                        source.close()
+                    end
 
-                    ## img.sourceという、{image}:{tag}のペアを記録したファイルを作る。
+                    ## 
 
-                    ## 展開したファイルシステムを/var/oceanous以下にコピー、
+    uuid="img_$(shuf -i 42002-42254 -n 1)"
+    if [[ -d "$1" ]]; then
+        [[ "$(bocker_check "$uuid")" == 0 ]] && bocker_run "$@"
+        btrfs subvolume create "$btrfs_path/$uuid" > /dev/null
+        cp -rf --reflink=auto "$1"/* "$btrfs_path/$uuid" > /dev/null
+        [[ ! -f "$btrfs_path/$uuid"/img.source ]] && echo "$1" > "$btrfs_path/$uuid"/img.source
+        echo "Created: $uuid"
+    else
+        echo "No directory named '$1' exists"
+    fi
+
+
                 rescue => e
                     puts e.message
-                    FileUtils.rm_r("/tmp/#{uuid}")
+                    FileUtils.rm_rf("/tmp/#{uuid}")
                 end
+            end
+
+            def create_image
+                @image_id = 
+
+                # subvolumeを作成
+                # 同じイメージでもpull時に差分があれば更新
+                # 
+
+                FileUtils.rm_rf("/tmp/#{@image_id}")
             end
         end
     end
