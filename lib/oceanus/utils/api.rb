@@ -1,5 +1,6 @@
 require 'httpclient'
 require 'fileutils'
+require 'oceanus/utils/file_system'
 
 module Oceanus
     module Utils
@@ -76,20 +77,18 @@ module Oceanus
                         source.close()
                     end
 
-                    ## 
+                    ## 論理ボリュームを作成
+                    uuid="img_#{rand(1..10000)}"
+                    fs = Oceanus::Utils::FileSystem.new()
+                    fs.create_volume(uuid)
 
-    uuid="img_$(shuf -i 42002-42254 -n 1)"
-    if [[ -d "$1" ]]; then
-        [[ "$(bocker_check "$uuid")" == 0 ]] && bocker_run "$@"
-        btrfs subvolume create "$btrfs_path/$uuid" > /dev/null
-        cp -rf --reflink=auto "$1"/* "$btrfs_path/$uuid" > /dev/null
-        [[ ! -f "$btrfs_path/$uuid"/img.source ]] && echo "$1" > "$btrfs_path/$uuid"/img.source
-        echo "Created: $uuid"
-    else
-        echo "No directory named '$1' exists"
-    fi
-
-
+                    ## ファイル差分をボリューム配下にコピー
+                    ## reflink=autoはデフォルトで有効
+                    begin
+                       FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{uuid}", { :force => true })
+                    rescue ArguementError
+                       return
+                    end
                 rescue => e
                     puts e.message
                     FileUtils.rm_rf("/tmp/#{uuid}")
