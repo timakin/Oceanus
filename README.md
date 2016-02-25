@@ -22,7 +22,8 @@ Or install it yourself as:
 ```sh
 $ oceanus pull {image}:{tag}
 $ oceanus ps
-$ oceanus run {image} {command}
+$ oceanus run {image}
+$ oceanus exec {image} {command}
 $ oceanus logs {container_id}
 $ oceanus images
 $ oceanus rm {container_id}
