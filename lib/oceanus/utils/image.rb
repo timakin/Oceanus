@@ -4,23 +4,24 @@ require 'oceanus/utils/file_system'
 
 module Oceanus
     module Utils
-        class API
+        class Image
             def initialize(image, tag='latest')
                 @client          = HTTPClient.new()
                 @index_path      = "https://index.docker.io/v1"
                 @registry_path   = "https://registry-1.docker.io/v1"
                 @image_path      = "#{@index_path}/repositories/#{image}/images"
-                @latest_tag_path = "#{@registry_path}/repositories/#{image}/tags/#{tag}"
+                @tag_path = "#{@registry_path}/repositories/#{image}/tags/#{tag}"
                 @image = image
                 @tag   = tag
                 @uuid  = SecureRandom.uuid
             end
 
-            def get_images
+            def get_image
                 get_access_token
-                get_latest_tag
+                get_image_id
                 get_ancestry
                 get_layers
+                create_image_volume
             end
 
             private
@@ -31,15 +32,15 @@ module Oceanus
                 @access_token = res.header["X-Docker-Token"].join(", ")
             end
 
-            # imageの最新版のtagを取得する
-            def get_latest_tag
-                res = @client.get(@latest_tag_path, nil, {'Authorization' => "Token #{@access_token}"})
-                @latest_tag = res.body.gsub(/"/, "")
+            # Get image id for a particular tag
+            def get_image_id
+                res = @client.get(@tag_path, nil, {'Authorization' => "Token #{@access_token}"})
+                @image_id = res.body.gsub(/"/, "")
             end
 
             # Imageのancestry(diff履歴)を取得する
             def get_ancestry
-                ancestry_path = "#{@registry_path}/images/#{@latest_tag}/ancestry"
+                ancestry_path = "#{@registry_path}/images/#{@image_id}/ancestry"
                 res = @client.get(ancestry_path, nil, {'Authorization' => "Token #{@access_token}"})
                 @ancestry = res.body.gsub(/\[|\]|"/, "").split(", ")
             end
@@ -76,32 +77,27 @@ module Oceanus
                         source.write("#{@image}:#{@tag}")
                         source.close()
                     end
-
-                    ## 論理ボリュームを作成
-                    uuid="img_#{rand(1..10000)}"
-                    fs = Oceanus::Utils::FileSystem.new()
-                    fs.create_volume(uuid)
-
-                    ## ファイル差分をボリューム配下にコピー
-                    ## reflink=autoはデフォルトで有効
-                    begin
-                       FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{uuid}", { :force => true })
-                    rescue ArguementError
-                       return
-                    end
                 rescue => e
                     puts e.message
                     FileUtils.rm_rf("/tmp/#{uuid}")
                 end
             end
 
-            def create_image
-                @image_id = 
+            def create_image_volume
+                ## 論理ボリュームを作成
+                uuid="img_#{rand(1..10000)}"
+                fs = Oceanus::Utils::FileSystem.new()
+                fs.create_volume(uuid)
 
-                # subvolumeを作成
-                # 同じイメージでもpull時に差分があれば更新
-                # 
+                ## ファイル差分をボリューム配下にコピー
+                ## reflink=autoはデフォルトで有効
+                begin
+                   FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{uuid}", { :force => true })
+                rescue ArguementError
+                   puts "Image is already created."
+                end
 
+                ## 一時的に用意しておいた保存ディレクトリ以下のファイル群を削除
                 FileUtils.rm_rf("/tmp/#{@image_id}")
             end
         end

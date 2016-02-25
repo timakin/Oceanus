@@ -31,6 +31,16 @@ $ oceanus stop {container_id}
 $ oceanus build -t {image}:{tag} {directory_path_of_Dockerfile}
 ```
 
+[ ] pull
+[ ] ps
+[ ] run
+[ ] logs
+[ ] images
+[ ] rm
+[ ] rmi
+[ ] stop
+[ ] build
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/oceanus/fork )
