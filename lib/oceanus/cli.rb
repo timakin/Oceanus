@@ -17,5 +17,15 @@ module Oceanus
         def build(image, path)
             Oceanus::Commands::Build.exec(image, path)
         end
+
+        desc *DESCRIPTIONS[:rm]
+        def rm(container_id)
+            Oceanus::Commands::Remove.container(container_id)
+        end
+
+        desc *DESCRIPTIONS[:rmi]
+        def rmi(image_id)
+            Oceanus::Commands::Remove.image(image_id)
+        end
    end
 end

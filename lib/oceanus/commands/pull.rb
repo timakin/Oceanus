@@ -1,4 +1,4 @@
-require 'oceanus/utils/api'
+require 'oceanus/utils/image'
 
 module Oceanus
     module Commands
