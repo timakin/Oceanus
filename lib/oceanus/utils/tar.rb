@@ -73,15 +73,3 @@ module Oceanus
   end
 end
 
-
-
-### Usage Example: ###
-#
-# include Util::Tar
-# 
-# io = tar("./Desktop")   # io is a TAR of files
-# gz = gzip(io)           # gz is a TGZ
-# 
-# io = ungzip(gz)         # io is a TAR
-# untar(io, "./untarred") # files are untarred
-#

@@ -32,15 +32,15 @@ $ oceanus stop {container_id}
 $ oceanus build -t {image}:{tag} {directory_path_of_Dockerfile}
 ```
 
--[x] pull
--[ ] ps
--[ ] run
--[ ] logs
--[ ] images
--[x] rm
--[x] rmi
--[ ] stop
--[ ] build
+- [x] pull
+- [ ] ps
+- [ ] run
+- [ ] logs
+- [x] images
+- [x] rm
+- [x] rmi
+- [ ] stop
+- [ ] build
 
 ## Contributing
 

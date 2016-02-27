@@ -110,7 +110,6 @@ module Oceanus
                 fs.create_volume(uuid)
 
                 ## ファイル差分をボリューム配下にコピー
-                ## reflink=autoはデフォルトで有効
                 begin
                    FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{uuid}", { :force => true })
                 rescue ArguementError
