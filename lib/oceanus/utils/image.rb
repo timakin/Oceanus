@@ -24,6 +24,26 @@ module Oceanus
                 create_image_volume
             end
 
+            class << self
+                def get_image_source_mapping
+                    img_source_paths = Dir.glob("#{fs.saving_path}/**/img.source")
+                    if img_source_paths.empty?
+                        return {}
+                    end
+                    image_ids = Dir.glob("#{fs.saving_path}/**/")
+                                   .map{ |dir| dir.split("/").size == 1 }
+                                   .each{ |dir| dir.slice!("#{fs.saving_path}/") }
+                    mapping = Hash.new
+                    for id in image_ids
+                        img_source_path = img_source_paths.select{ |p| p.split("/")[1] == id }.first
+                        img_source = File.open(img_source_path).read
+                        mapping.store(id, img_source)
+                    end
+                    mapping
+                end
+            end
+
+
             private
 
             # Docker Registry APIを叩くために必要なアクセストークンを取得する
@@ -100,6 +120,7 @@ module Oceanus
                 ## 一時的に用意しておいた保存ディレクトリ以下のファイル群を削除
                 FileUtils.rm_rf("/tmp/#{@image_id}")
             end
+
         end
     end
 end
