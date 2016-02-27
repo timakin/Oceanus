@@ -6,7 +6,7 @@ module Oceanus
         class ProcessStatus
             def self.exec
                 c = LXC::Container.new()
-                c.info("*")
+                c.state("*")
             end
         end
     end

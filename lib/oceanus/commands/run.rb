@@ -7,6 +7,7 @@ module Oceanus
             def self.exec(image, *args)
                 c = LXC::Container.new(uuidgen)
                 # TODO: image name => template_path
+                # TODO: backingstore => btrfs
                 c.create(image)
                 c.start
                 c.attach do

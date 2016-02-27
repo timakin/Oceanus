@@ -33,14 +33,16 @@ $ oceanus build -t {image}:{tag} {directory_path_of_Dockerfile}
 ```
 
 - [x] pull
-- [ ] ps
+- [x] ps
 - [x] run
+- [x] exec
 - [ ] logs
 - [x] images
 - [x] rm
 - [x] rmi
-- [ ] stop
+- [x] stop
 - [ ] build
+- [ ] commit
 
 ## Contributing
 
