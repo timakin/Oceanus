@@ -42,7 +42,7 @@ $ oceanus build -t {image}:{tag} {directory_path_of_Dockerfile}
 - [x] rmi
 - [x] stop
 - [ ] build
-- [ ] commit
+- [x] commit
 
 ## Contributing
 
