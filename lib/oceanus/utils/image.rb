@@ -69,12 +69,12 @@ module Oceanus
             # ストレージの状態の差分(ancestry)をレイヤとして重ね合わせることで、イメージを形成する。（ユニオンファイルシステム）
             def get_layers
                 puts @uuid
+                # TODO: 本当にuuidでいいのか
                 Dir.mkdir("/tmp/#{@uuid}")
                 puts "Downloading images..."
                 begin
                     ## 個別のimageデータを取得し、tarファイルとして保存。
-                    # TODO: 便宜的にancestryの最初の方のimageを保存している。
-                    @ancestry[3..4].map { |id|
+                    @ancestry.map { |id|
                         layer_path       = "#{@registry_path}/images/#{id}/layer"
                         gateway_res      = @client.get(layer_path, nil, {'Authorization' => "Token #{@access_token}"})
                         compressed_image = @client.get(gateway_res.header['Location'][0], nil, {'Authorization' => "Token #{@access_token}"})
