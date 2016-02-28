@@ -27,5 +27,40 @@ module Oceanus
         def rmi(image_id)
             Oceanus::Commands::Remove.image(image_id)
         end
-   end
+
+        desc *DESCRIPTIONS[:commit]
+        def commit(src_container, snapshot_name)
+            Oceanus::Commands::Commit.exec(src_container, snapshot_name)
+        end
+
+        desc *DESCRIPTIONS[:exec]
+        def exec(container, *args)
+            Oceanus::Commands::Exec.exec(container, *args)
+        end
+
+        desc *DESCRIPTIONS[:images]
+        def images
+            Oceanus::Commands::Images.exec
+        end
+
+        desc *DESCRIPTIONS[:logs]
+        def logs(container)
+            Oceanus::Commands::Logs.exec(container)
+        end
+
+        desc *DESCRIPTIONS[:ps]
+        def ps
+            Oceanus::Commands::ProcessStatus.exec
+        end
+
+        desc *DESCRIPTIONS[:run]
+        def run(image, *args)
+            Oceanus::Commands::Run.exec(image, *args)
+        end
+
+        desc *DESCRIPTIONS[:stop]
+        def stop(image)
+            Oceanus::Commands::Stop.exec(image)
+        end
+    end
 end

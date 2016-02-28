@@ -9,7 +9,6 @@ module Oceanus
                 c.attach do
                     LXC.run_command(args)
                 end
-                puts "Run a command in an existing container"
             end
         end
     end

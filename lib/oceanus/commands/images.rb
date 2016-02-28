@@ -11,7 +11,6 @@ module Oceanus
                     name, tag = source_info.split(":")
                     puts "#{name}\t#{tag}\t#{image_id}"
                 end
-                puts "image list"
             end
         end
     end

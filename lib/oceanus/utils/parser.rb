@@ -16,7 +16,7 @@ module Oceanus
                         id_and_procedure = line.split(" ")
                         procedure_id = id_and_procedure[0]
                         if PROCEDURE_IDENTIFIERS.exists?(procedure_id) && id_and_procedure.length > 1
-                            cmd_map[procedure_id] << line.split(" ")[1..-1]
+                            cmd_map[procedure_id] << id_and_procedure[1..-1]
                         end
                     end
 

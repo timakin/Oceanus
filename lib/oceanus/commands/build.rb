@@ -21,13 +21,22 @@ module Oceanus
                 c.start
                 cmds["RUN"].each do |run_cmd|
                     c.attach do
-                        LXC.run_command(run_cmd)
+                        LXC.run_command(run_cmd.join(" "))
+                    end
+                end
+
+                cmds["ADD"].each do |cmd|
+                    if (cmd.length > 1)
+                        src = cmd[0]
+                        dest = cmd[1]
+                        # TODO: rootfs
+                        FileUtils.cp_rf(src, rootfs + dest)
                     end
                 end
 
                 cmds["CMD"].each do |cmd|
                     c.attach do
-                        LXC.run_command(run_cmd)
+                        LXC.run_command(run_cmd.join(" "))
                     end
                 end
             end
