@@ -68,10 +68,9 @@ module Oceanus
             # layer(Imageのバイナリデータ)を取得し、特定ディレクトリ配下に展開する
             # ストレージの状態の差分(ancestry)をレイヤとして重ね合わせることで、イメージを形成する。（ユニオンファイルシステム）
             def get_layers
-                puts @uuid
                 # TODO: 本当にuuidでいいのか
                 Dir.mkdir("/tmp/#{@uuid}")
-                puts "Downloading images..."
+                puts "Downloading an image..."
                 begin
                     ## 個別のimageデータを取得し、tarファイルとして保存。
                     @ancestry.map { |id|
@@ -97,6 +96,7 @@ module Oceanus
                         source.write("#{@image}:#{@tag}")
                         source.close()
                     end
+                    puts "Image id: #{@uuid}"
                 rescue => e
                     puts e.message
                     FileUtils.rm_rf("/tmp/#{uuid}")
