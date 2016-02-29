@@ -6,8 +6,7 @@ module Oceanus
         class Logs
             def self.exec(container)
                 fs = Oceanus::Utils::FileSystem.new()
-                # TODO: container_name, saving output file when start, exc, run.
-                File.opne(fs.saving_pathi + "logs/" + container, 'r') do |log|
+                File.open("#{fs.saving_path}/logs/#{container}", 'r') do |log|
                     while logline = log.gets
                        puts logline
                     end

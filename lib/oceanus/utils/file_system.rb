@@ -6,6 +6,7 @@ module Oceanus
             def initialize
                 @saving_path = "/var/oceanus"
             end
+
             # 論理ボリュームの作成
             def create_volume(uuid)
                 cmd = "btrfs subvolume create #{@saving_path}/#{uuid}"

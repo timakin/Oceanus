@@ -5,19 +5,17 @@ module Oceanus
     module Commands
         # Dockerfileからimageを作成するクラス
         class Build
-            # TODO: ビルドファイルに差分があるかチェックする
-            # TODO: entrypointのコマンドを保存しておいて、起動時に実行する
             def self.exec(path)
                 cmds = Oceanus::Utils::Parser.get_input_commands(path)
 
                 # get Image with `FROM` tag
                 image, tag = cmds["FROM"].split("")
-                api = Oceanus::Utils::Image.new(image, tag)
-                api.get_image
+                image_manager = Oceanus::Utils::Image.new(image, tag)
+                image_manager.get_image
 
-                # TODO: not uuid, use short id or name
-                c = LXC::Container.new(uuidgen)
-                c.create(image)
+                # TODO: image rootfs path
+                c = LXC::Container.new(SecureRandom.hex(10))
+                c.create(rootfs + image_manaber.image)
                 c.start
                 cmds["RUN"].each do |run_cmd|
                     c.attach do

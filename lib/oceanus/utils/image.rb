@@ -5,6 +5,9 @@ require 'oceanus/utils/file_system'
 module Oceanus
     module Utils
         class Image
+            attr_reader :image
+            attr_reader :uuid
+
             def initialize(image, tag='latest')
                 @client          = HTTPClient.new()
                 @index_path      = "https://index.docker.io/v1"
@@ -13,7 +16,7 @@ module Oceanus
                 @tag_path = "#{@registry_path}/repositories/#{image}/tags/#{tag}"
                 @image = image
                 @tag   = tag
-                @uuid  = SecureRandom.uuid
+                @uuid  = SecureRandom.hex(10)
             end
 
             def get_image
@@ -68,7 +71,6 @@ module Oceanus
             # layer(Imageのバイナリデータ)を取得し、特定ディレクトリ配下に展開する
             # ストレージの状態の差分(ancestry)をレイヤとして重ね合わせることで、イメージを形成する。（ユニオンファイルシステム）
             def get_layers
-                # TODO: 本当にuuidでいいのか
                 Dir.mkdir("/tmp/#{@uuid}")
                 puts "Downloading an image..."
                 begin
@@ -85,9 +87,9 @@ module Oceanus
 
                         ## 一時的にlayer.tarとして保存したimageを特定ディレクトリに展開する。
                         ## 展開し終わったらlayer.tarは削除する。
-                        tarmanager = Tar.new()
-                        io = tarmanager.tar("/tmp/#{@uuid}/layer.tar")
-                        tarmanager.untar(io, "/tmp/#{@uuid}")
+                        tar_manager = Tar.new()
+                        io = tar_manager.tar("/tmp/#{@uuid}/layer.tar")
+                        tar_manager.untar(io, "/tmp/#{@uuid}")
                         FileUtils.rm_rf("/tmp/#{@uuid}/layer.tar")
                     }
 
@@ -99,19 +101,18 @@ module Oceanus
                     puts "Image id: #{@uuid}"
                 rescue => e
                     puts e.message
-                    FileUtils.rm_rf("/tmp/#{uuid}")
+                    FileUtils.rm_rf("/tmp/#{@uuid}")
                 end
             end
 
             def create_image_volume
                 ## 論理ボリュームを作成
-                uuid="img_#{rand(1..10000)}"
                 fs = Oceanus::Utils::FileSystem.new()
-                fs.create_volume(uuid)
+                fs.create_volume(@uuid)
 
                 ## ファイル差分をボリューム配下にコピー
                 begin
-                   FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{uuid}", { :force => true })
+                   FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{@uuid}")
                 rescue ArguementError
                    puts "Image is already created."
                 end
