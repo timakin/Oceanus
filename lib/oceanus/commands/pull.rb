@@ -6,8 +6,8 @@ module Oceanus
         class Pull
             def self.exec(image_and_tag)
                 image, tag = image_and_tag.split(":")
-                api = Oceanus::Utils::Image.new(image, tag)
-                api.get_image
+                image_manager = Oceanus::Utils::Image.new(image, tag)
+                image_manager.get_image
             end
         end
     end

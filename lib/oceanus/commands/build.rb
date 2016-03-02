@@ -13,9 +13,8 @@ module Oceanus
                 image_manager = Oceanus::Utils::Image.new(image, tag)
                 image_manager.get_image
 
-                # TODO: image rootfs path
                 c = LXC::Container.new(SecureRandom.hex(10))
-                c.create(rootfs + image_manaber.image)
+                c.create("-t", "none", "-B", "dir", "--dir", fs.saving_path + image_manager.uuid)
                 c.start
                 cmds["RUN"].each do |run_cmd|
                     c.attach do
@@ -27,8 +26,7 @@ module Oceanus
                     if (cmd.length > 1)
                         src = cmd[0]
                         dest = cmd[1]
-                        # TODO: rootfs
-                        FileUtils.cp_rf(src, rootfs + dest)
+                        FileUtils.cp_rf(src, fs.saving_path + dest)
                     end
                 end
 

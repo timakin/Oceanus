@@ -5,11 +5,9 @@ module Oceanus
     module Commands
         # コンテナを作成するクラス
         class Run
-            def self.exec(image, *args)
+            def self.exec(image_id, *args)
                 c = LXC::Container.new(SecureRandom.hex(10))
-                # TODO: image name => rootfs
-                # TODO: template: none
-                c.create(fs.saving_path + image, "-B", "btrfs")
+                c.create("-t", "none", "-B", "dir", "--dir", fs.saving_path + image_id)
                 c.start
                 c.attach do
                     LXC.run_command(args)

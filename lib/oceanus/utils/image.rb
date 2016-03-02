@@ -49,13 +49,13 @@ module Oceanus
 
             private
 
-            # Docker Registry APIを叩くために必要なアクセストークンを取得する
+            # Docker Hub APIのimages endpointを叩いて、必要なsession tokenを取得する
             def get_access_token
                 res = @client.get(@image_path, nil, {'X-Docker-Token' => true})
                 @access_token = res.header["X-Docker-Token"].join(", ")
             end
 
-            # Get image id for a particular tag
+            #  session token付きでRegistry APIを叩いて、該当タグのimage_idを取得する
             def get_image_id
                 res = @client.get(@tag_path, nil, {'Authorization' => "Token #{@access_token}"})
                 @image_id = res.body.gsub(/"/, "")
