@@ -7,7 +7,7 @@ module Oceanus
             def self.exec
                 c = LXC::Container.new()
                 # TODO: たぶん間違ってる
-                c.state("*")
+                c.state()
             end
         end
     end
