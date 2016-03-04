@@ -8,7 +8,8 @@ module Oceanus
                 container_ids = Dir.glob("/var/lib/lxc/**/")
                                .map{ |dir| dir.split("/").size == 1 }
                                .each{ |dir| dir.slice!("#{fs.saving_path}/") }
-
+                for id in container_ids
+                end
 
 c = LXC::Container.new()
                 # TODO: たぶん間違ってる
