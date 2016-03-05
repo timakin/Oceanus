@@ -6,14 +6,13 @@ module Oceanus
         class ProcessStatus
             def self.exec
                 container_ids = Dir.glob("/var/lib/lxc/**/")
-                               .map{ |dir| dir.split("/").size == 1 }
+                               .select{ |dir| dir.split("/").size == 5 }
                                .each{ |dir| dir.slice!("#{fs.saving_path}/") }
+                               .each{ |dir| dir.slice!("/") }
                 for id in container_ids
+                    c = LXC::Container.new(id)
+                    c.state()
                 end
-
-c = LXC::Container.new()
-                # TODO: たぶん間違ってる
-                c.state()
             end
         end
     end

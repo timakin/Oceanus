@@ -106,10 +106,6 @@ module Oceanus
             end
 
             def create_image_volume
-                ## 論理ボリュームを作成
-                fs = Oceanus::Utils::FileSystem.new()
-                fs.create_volume(@uuid)
-
                 ## ファイル差分をボリューム配下にコピー
                 begin
                    FileUtils.cp_r(Dir.glob("/tmp/#{@uuid}/*"), "#{fs.saving_path}/#{@uuid}")

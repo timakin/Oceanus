@@ -7,7 +7,7 @@ module Oceanus
         class Run
             def self.exec(image_id, *args)
                 c = LXC::Container.new(SecureRandom.hex(10))
-                c.create("-t", "none", "-B", "dir", "--dir", fs.saving_path + image_id)
+                c.create("-t", "none", "-B", "dir", "--dir", "#{fs.saving_path}/#{image_id}")
                 c.start
                 c.attach do
                     LXC.run_command(args)
