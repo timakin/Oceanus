@@ -1,5 +1,6 @@
 require 'oceanus/utils/parser'
 require 'lxc'
+require 'digest/md5'
 
 module Oceanus
     module Commands
@@ -7,6 +8,17 @@ module Oceanus
         class Build
             def self.exec(path)
                 cmds = Oceanus::Utils::Parser.get_input_commands(path)
+                # すでに実行したコマンドをファイルに書き出しておいて、再実行を防ぐ。
+                # md5ハッシュ値が存在しなかったら実行する
+                cmd_file_path = fs.saving_path + image_manager.uuid + "/.executed_cmds"
+                if File.exists?(cmd_file_path)
+                    FileUtils.touch(cmd_file_path)
+                    File.open(cmd_file_path, 'w') { |f| f.write("[]") }
+                end
+
+                File.open(cmd_file_path, "r") do |f|
+                    f.write()
+                end
 
                 # get Image with `FROM` tag
                 image, tag = cmds["FROM"].split("")
