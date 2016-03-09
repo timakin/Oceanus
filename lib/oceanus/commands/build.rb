@@ -24,6 +24,8 @@ module Oceanus
                     c.attach do
                         LXC.run_command(run_cmd.join(" "))
                     end
+
+                    record_cmd(fs.saving_path, image_manager.uuid, run_cmd)
                 end
 
                 cmds["ADD"].each do |cmd|
@@ -38,8 +40,11 @@ module Oceanus
                     c.attach do
                         LXC.run_command(run_cmd.join(" "))
                     end
+                    record_cmd(fs.saving_path, image_manager.uuid, cmd)
                 end
             end
+
+            private
 
             def generate_record(saving_path, uuid)
                 cmd_file_path = saving_path + uuid + "/.executed_cmds"
