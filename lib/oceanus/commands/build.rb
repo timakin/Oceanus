@@ -6,8 +6,14 @@ module Oceanus
     module Commands
         # Dockerfileからimageを作成するクラス
         class Build
+
             def self.exec(path)
                 cmds = Oceanus::Utils::Parser.get_input_commands(path)
+                # get Image with `FROM` tag
+                image, tag = cmds["FROM"].split("")
+                image_manager = Oceanus::Utils::Image.new(image, tag)
+                image_manager.get_image
+
                 # すでに実行したコマンドをファイルに書き出しておいて、再実行を防ぐ。
                 # md5ハッシュ値が存在しなかったら実行する
                 cmd_file_path = fs.saving_path + image_manager.uuid + "/.executed_cmds"
@@ -15,15 +21,6 @@ module Oceanus
                     FileUtils.touch(cmd_file_path)
                     File.open(cmd_file_path, 'w') { |f| f.write("[]") }
                 end
-
-                File.open(cmd_file_path, "r") do |f|
-                    f.write()
-                end
-
-                # get Image with `FROM` tag
-                image, tag = cmds["FROM"].split("")
-                image_manager = Oceanus::Utils::Image.new(image, tag)
-                image_manager.get_image
 
                 c = LXC::Container.new(SecureRandom.hex(10))
                 c.create("-t", "none", "-B", "dir", "--dir", fs.saving_path + image_manager.uuid)
@@ -46,6 +43,13 @@ module Oceanus
                     c.attach do
                         LXC.run_command(run_cmd.join(" "))
                     end
+                end
+            end
+
+            def record_cmd(cmd)
+                cmd_file_path = fs.saving_path + image_manager.uuid + "/.executed_cmds"
+                File.open(cmd_file_path, 'a') do |f|
+                    
                 end
             end
         end
