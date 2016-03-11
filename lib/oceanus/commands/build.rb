@@ -50,7 +50,7 @@ module Oceanus
                 cmd_file_path = saving_path + uuid + "/.executed_cmds"
                 if File.exists?(cmd_file_path)
                     FileUtils.touch(cmd_file_path)
-                    File.open(cmd_file_path, 'w') { |f| f.write("[]") }
+                    File.open(cmd_file_path, 'w') { |f| f.write(JSON.generate([])) }
                 end
             end
 
